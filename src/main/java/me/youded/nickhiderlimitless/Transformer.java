@@ -29,6 +29,7 @@ public class Transformer implements ClassFileTransformer {
             cr.accept(cn, 0);
 
             if (cn.methods.size() > 40) {
+                boolean found = false;
                 for (MethodNode method : cn.methods) {
                     if (method.desc.equals("(Ljava/lang/Character;)Ljava/lang/Character;")) {
                         for (AbstractInsnNode insn : method.instructions) {
@@ -36,14 +37,17 @@ public class Transformer implements ClassFileTransformer {
                                 IntInsnNode intInsnNode = (IntInsnNode) insn;
                                 if (intInsnNode.operand == 12) {
                                     intInsnNode.operand = 64;
+                                    found = true;
                                 }
                             }
                         }
                     }
                 }
-                ClassWriter cw = new ClassWriter(cr, 0);
-                cn.accept(cw);
-                return cw.toByteArray();
+                if (found) {
+                    ClassWriter cw = new ClassWriter(cr, 0);
+                    cn.accept(cw);
+                    return cw.toByteArray();
+                }
             }
         }
         return classfileBuffer;
