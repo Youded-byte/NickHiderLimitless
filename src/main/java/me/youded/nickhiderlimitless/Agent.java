@@ -35,7 +35,15 @@ public class Agent {
                         boolean found = false;
                         for (MethodNode method : cn.methods) {
                             if (method.desc.equals("(Ljava/lang/Character;)Ljava/lang/Character;") && method.access == Opcodes.ACC_PRIVATE + Opcodes.ACC_SYNTHETIC) {
-                                System.out.println("Found right function!");
+                                for (MethodNode methoda : cn.methods) {
+                                    if (methoda.desc.equals("(Ljava/lang/String;)V")){
+                                        for(AbstractInsnNode insn : methoda.instructions){
+                                            if(insn.getOpcode() == Opcodes.IFEQ) {
+                                                methoda.instructions.set(insn, new InsnNode(Opcodes.POP));
+                                            }
+                                        }
+                                    }
+                                }
                                 method.instructions.clear();
                                 method.localVariables.clear();
                                 method.exceptions.clear();
